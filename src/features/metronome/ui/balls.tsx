@@ -12,7 +12,7 @@ export const Balls = () => {
 
 
     return (
-        <div className="flex">
+        <div className="flex justify-center">
             {state?.map((item, index) =>
                 <MetronomeBarComponent type={state[currentBarIndex].type} isActive={index === currentBarIndex}
                                        key={item.id}/>

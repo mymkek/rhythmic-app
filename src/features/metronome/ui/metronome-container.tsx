@@ -37,7 +37,7 @@ export const Metronome = ({children}:ContainerProps) => {
 
 
     return (
-        <div className="grid grid-rows-4 grid-flow-col gap-6">
+        <div className="grid grid-cols-1 gap-4">
             {children}
             <button onClick={toggleStart} className="p-4 border-2">
                 {isStarted ? "Stop" : "Start"} {tempo} BPM, {timeSignature}/4

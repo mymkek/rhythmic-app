@@ -5,6 +5,7 @@ import React from "react";
 import {MAX_TEMPO, MIN_TEMPO} from "@/features/metronome/constants";
 import {useMetronomeState} from "@/features/metronome/model/metronome-state";
 import {ChangeNumericValueHandler} from "@/features/metronome/ui/types";
+import {Button} from "@/shared/ui/inputs/button";
 import {RangeSlider} from "@/shared/ui/inputs/range/range-slider";
 
 
@@ -68,18 +69,22 @@ export const SettingsForm = () => {
 
     return (
         <div>
-            <div className="flex">
-                <h3>tempo</h3>
-                <div className="flex">
-                    <button onClick={decreaseTempo}>- 1</button>
-                    <button onClick={increaseTempo}>+ 1</button>
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <h3>tempo</h3>
+                    <div className="flex">
+                        <Button onClick={decreaseTempo}>- 1</Button>
+                        <Button onClick={increaseTempo}>+ 1</Button>
+                    </div>
                 </div>
 
-                <h3>time signature</h3>
-                <div className="flex">
+                <div>
+                    <h3>time signature</h3>
+                    <div className="flex">
 
-                    <button onClick={decreaseTimeSignature}>- 1</button>
-                    <button onClick={increaseTimeSignature}>+ 1</button>
+                        <Button onClick={decreaseTimeSignature}>- 1</Button>
+                        <Button onClick={increaseTimeSignature}>+ 1</Button>
+                    </div>
                 </div>
             </div>
 
