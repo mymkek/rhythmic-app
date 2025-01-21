@@ -4,7 +4,7 @@ import {subscribeWithSelector} from 'zustand/middleware'
 
 import {AudioPlayer} from "@/shared/lib/audio-player";
 
-import {BASE_TEMPO} from "../constants/index";
+import {BASE_TEMPO, MAX_TEMPO} from "../constants/index";
 
 
 const getBarTime = (tempo: number, size: number) => {
@@ -30,10 +30,9 @@ type MetronomeStoreActions = {
 
 type MetronomeStore = MetronomeStoreState & MetronomeStoreActions
 
-const initialState: Omit<MetronomeStoreState, "barPattern"> = {
+const initialState: Omit<MetronomeStoreState, "barPattern" | "tempo"> = {
     isStarted: false,
     currentBar: -1,
-    tempo: BASE_TEMPO,
     barStartTimestamp: null,
     nextTickTimestamp: null,
 }
@@ -41,6 +40,7 @@ const initialState: Omit<MetronomeStoreState, "barPattern"> = {
 export const useMetronomeState = create<MetronomeStore>()(
     subscribeWithSelector((set, getState) => ({
         ...initialState,
+        tempo: BASE_TEMPO,
         barPattern: [1, 0, 0, 0],
         toggleStarted: () => {
             set({isStarted: !getState().isStarted});
@@ -55,7 +55,15 @@ export const useMetronomeState = create<MetronomeStore>()(
             }
         },
         setTempo: (tempo) => {
-            set({tempo: tempo});
+            let updTempo = tempo;
+            if (tempo > MAX_TEMPO) {
+                updTempo = MAX_TEMPO;
+            }
+
+            if (tempo < 1) {
+                updTempo = 1;
+            }
+            set({tempo: updTempo});
         }
     })),
 );
@@ -100,7 +108,7 @@ const toggleStart = (isStarted: boolean) => {
 useMetronomeState.subscribe((state) => state.isStarted, toggleStart);
 useMetronomeState.subscribe((state) => state.currentBar, (currentBar) => {
     if(currentBar !== -1) {
-        AudioPlayer.playSound('metronome_1')
+        //AudioPlayer.playSound('metronome_1')
     }
 });
 useMetronomeState.subscribe((state) => state.barPattern, () => {

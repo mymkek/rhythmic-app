@@ -1,94 +1,79 @@
 "use client"
 
-import React, {useEffect, useRef, useState} from "react";
-
+import React, {useEffect, useRef} from "react";
 
 import {useMetronomeState} from "@/features/metronome/model";
-import {useMidiMessageStore} from "@/shared/lib/midi-provider";
+import {useMidiRecorderStore} from "@/shared/lib/midi-provider";
 
-type Ctx = CanvasRenderingContext2D;
 
-const separateByCols = (ctx: Ctx, cols: number, color: string) => {
-    const stepCols = ctx.canvas.width / cols;
-
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.setLineDash([5, 5]);
-
-    for (let i = 1; i < cols; i++) {
-        const x = i * stepCols;
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, ctx.canvas.height);
-    }
-
-    ctx.stroke();
+type BarCanvasProps = {
+    width: number;
+    height: number;
 }
 
+export const BarCanvas = ({height, width}: BarCanvasProps) => {
 
-export const BarCanvas = () => {
+    const {tempo, isStarted, barPattern, barStartTimestamp} = useMetronomeState();
+    const {recycle} = useMidiRecorderStore();
+    const timeSignature = barPattern.length;
 
-    const {tempo, isStarted, timeSignature, barStartTimestamp} = useMetronomeState();
-    const {currentNotes} = useMidiMessageStore();
-
-
-    const canvasRowsRef = useRef<HTMLCanvasElement>(null);
     const canvasNotesRef = useRef<HTMLCanvasElement>(null);
-    const [width, setWidth] = useState(0);
+
 
     useEffect(() => {
-        const canvas = canvasRowsRef.current;
-        setWidth(canvas?.parentElement?.scrollWidth || 10)
-    }, []);
+        const context = canvasNotesRef.current?.getContext('2d');
 
-    useEffect(() => {
-        const canvas = canvasRowsRef.current;
-        const context = canvas?.getContext('2d');
+        if (!context || !isStarted) return;
 
-        if(!context || !canvas) return;
-
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-        separateByCols(context, timeSignature * 4, '#aaa');
-        separateByCols(context, timeSignature, '#666');
-
-    }, [timeSignature, width]);
-
-    useEffect(() => {
-        const canvas = canvasNotesRef.current;
-        const context = canvas?.getContext('2d');
-
-        console.log(barStartTimestamp)
-        if(!context || !canvas || !isStarted || !barStartTimestamp) return;
+        const barTimeMs = timeSignature * (60000 / tempo);
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        context.fillStyle = "#7584d7";
+        recycle();
 
         let animationFrameId = -1;
-        const barTimeMs = timeSignature * (60000 / tempo);
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-        const render = () => {
-            const currentTime = Date.now();
 
+        const renderNotes = (notes: Map<number, number>) => {
 
+            if (!notes.size) {
+                window.cancelAnimationFrame(animationFrameId);
+                return;
+            }
+            console.log(notes)
+            function drawNotes() {
+                if(barStartTimestamp && context) {
+                    const currentTime = performance.now();
+                    const barFullnessNow = (currentTime - barStartTimestamp) / barTimeMs;
 
-            const barFullness = (currentTime - barStartTimestamp) / barTimeMs;
-            context.fillStyle = "#7584d7";
+                    notes.entries().forEach(([note, startTime]) => {
+                        const barFullnessStartNote = (startTime - barStartTimestamp) / barTimeMs;
+                        const startPos = Math.round(context.canvas.width * barFullnessStartNote);
+                        const endPos = Math.round(context.canvas.width * barFullnessNow);
+                        const width = endPos - startPos;
+                        const height = context.canvas.height / 144;
+                        const yPos = Math.round(height * note);
 
+                        context.fillRect(startPos, yPos, width, height);
+                    })
+                }
+                if(notes.size) {
+                    animationFrameId = window.requestAnimationFrame(drawNotes);
+                }
+            }
 
-            currentNotes.values().forEach((note) => {
-                context.fillRect(Math.round(canvas.width * barFullness), canvas.height - ((canvas.height / 144) * note), 1, canvas.height / 144)
-            })
+            drawNotes();
 
-            animationFrameId = window.requestAnimationFrame(render)
         }
-        render()
 
+        const unsubscribeStore = useMidiRecorderStore.subscribe(state => state.currentNotes, renderNotes)
 
         return () => {
             window.cancelAnimationFrame(animationFrameId)
+            unsubscribeStore()
+
         }
-    }, [timeSignature, isStarted, currentNotes, barStartTimestamp]);
+    }, [timeSignature, isStarted, barStartTimestamp]);
 
     return (
-        <div className="bg-amber-50 relative" style={{height: 300}}>
-            <canvas ref={canvasRowsRef} width={width} height={300} className="absolute top-0 left-0 z-10"/>
-            <canvas ref={canvasNotesRef} width={width} height={300} className="absolute top-0 left-0 z-20"/>
-        </div>
+        <canvas ref={canvasNotesRef} width={width} height={height} className="absolute top-0 left-0 z-20"/>
     )
 };

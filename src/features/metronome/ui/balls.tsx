@@ -10,7 +10,6 @@ export const Balls = () => {
 
     const {barPattern, currentBar} = useMetronomeState();
 
-
     return (
         <div className="flex justify-center">
             {barPattern?.map((item, index) =>

@@ -4,7 +4,6 @@ import React from "react";
 
 import {MAX_TEMPO, MIN_TEMPO} from "@/features/metronome/constants";
 import {useMetronomeState} from "@/features/metronome/model";
-import {ChangeNumericValueHandler} from "@/features/metronome/ui/types";
 import {Button} from "@/shared/ui/inputs/button";
 import {RangeSlider} from "@/shared/ui/inputs/range/range-slider";
 
@@ -13,29 +12,9 @@ export const SettingsForm = () => {
 
     const {tempo, setTempo, increaseBarPattern, decreaseBarPattern} = useMetronomeState();
 
-    const handleChangeTempo: ChangeNumericValueHandler = (operation, value) => {
-        const tempoChanges = operation === "add" ? value : 0 - value;
-
-        if (tempo + tempoChanges > MAX_TEMPO) {
-            return MAX_TEMPO;
-        }
-
-        if (tempo + tempoChanges < 1) {
-            return 1;
-        }
-
-        setTempo(tempo + tempoChanges);
-    }
-
-
-    const increaseTempo = () => {
-        handleChangeTempo("add", 1);
-    }
-
-    const decreaseTempo = () => {
-        handleChangeTempo("remove", 1);
-    }
-
+    const changeTempo = (delta: number) => {
+        setTempo(tempo + delta);
+    };
 
     const handleChangeSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Number(e.target.value);
@@ -52,29 +31,34 @@ export const SettingsForm = () => {
     }
 
     return (
-        <div>
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <h3>tempo</h3>
-                    <div className="flex">
-                        <Button onClick={decreaseTempo}>- 1</Button>
-                        <Button onClick={increaseTempo}>+ 1</Button>
-                    </div>
+        <>
+            <div className="grid grid-cols-3 gap-2">
+                <div className="flex gap-1">
+                    <Button onClick={() => changeTempo(-10)}>- 10</Button>
+                    <Button onClick={() => changeTempo(-1)}>- 1</Button>
                 </div>
 
-                <div>
-                    <h3>time signature</h3>
-                    <div className="flex">
+                <div className="col-start-3 flex justify-end gap-1">
+                    <Button onClick={() => changeTempo(1)}>+ 1</Button>
+                    <Button onClick={() => changeTempo(10)}>+ 10</Button>
+                </div>
 
-                        <Button onClick={decreaseBarPattern}>- 1</Button>
-                        <Button onClick={increaseBarPattern}>+ 1</Button>
-                    </div>
+                <div className="col-span-3">
+                    <RangeSlider min={MIN_TEMPO} max={MAX_TEMPO} value={tempo} onChange={handleChangeSlider}
+                                 marks={getSliderMarks(20)}/>
                 </div>
             </div>
 
 
-            <RangeSlider min={MIN_TEMPO} max={MAX_TEMPO} value={tempo} onChange={handleChangeSlider}
-                         marks={getSliderMarks(20)}/>
-        </div>
+            <div>
+                <h3>time signature</h3>
+                <div className="flex">
+
+                    <Button onClick={decreaseBarPattern}>- 1</Button>
+                    <Button onClick={increaseBarPattern}>+ 1</Button>
+                </div>
+            </div>
+
+        </>
     )
 };

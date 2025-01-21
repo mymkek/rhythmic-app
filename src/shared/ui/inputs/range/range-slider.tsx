@@ -9,8 +9,10 @@ export type RangeSliderProps = {
 }
 
 export const RangeSlider = ({value, onChange, min, max, marks}: RangeSliderProps) => {
+
+
     return (
-        <div className="relative mb-6">
+        <div className="relative">
             <label htmlFor="labels-range-input" className="sr-only">
                 Labels range
             </label>
@@ -23,11 +25,22 @@ export const RangeSlider = ({value, onChange, min, max, marks}: RangeSliderProps
                 onChange={onChange}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
             />
-            <div className="flex w-full justify-between">
-                {marks.map((mark, i) => (
-                    <span key={i} className="text-sm text-gray-500 dark:text-gray-400">
-                    {mark}
-                </span>
+            <div className="relative h-9 mx-2">
+
+                {marks.map((mark, i, array) => (
+                    <React.Fragment key={i}>
+                        <div className="absolute w-px bg-amber-50" style={{
+                            left: `${(i / (array.length - 1)) * 100}%`,
+                            height: (i + 1) % 10 === 0 || i === 0 || i === array.length - 1 ? 15 : 10
+                        }}/>
+                        <div className="absolute w-7 text-center top-4 text-sm text-gray-500"
+                             style={{
+                                 left: `calc(${(i / (array.length - 1)) * 100}% - 14px)`,
+                             }}>
+                            {mark}
+                        </div>
+                    </React.Fragment>
+
                 ))}
             </div>
 
