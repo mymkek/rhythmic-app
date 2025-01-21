@@ -1,7 +1,8 @@
 "use client"
 
+import {useEffect} from "react";
 
-import {useMIDIAccess} from "@/shared/lib/midi-provider/midi";
+import {useMidiMessageStore, useMIDIAccess} from "@/shared/lib/midi-provider";
 
 type MidiRequestContainerProps = {
     children: React.ReactNode;
@@ -9,27 +10,31 @@ type MidiRequestContainerProps = {
 
 export const MidiRequestContainer = ({children}: MidiRequestContainerProps) => {
 
-    const handleMIDIMessage = (msg: MIDIMessageEvent) => {
-        console.log(msg.data);
-    };
+    const {dispatchEvent: dispatchMidiEvent} = useMidiMessageStore();
 
-    const midiAccess = useMIDIAccess(handleMIDIMessage);
 
-    if(midiAccess.isPending) {
+    const { midiAccess, isMIDIAccessGranted } = useMIDIAccess();
+
+    useEffect(() => {
+        if(midiAccess) {
+            for (const input of midiAccess.inputs.values()) {
+                input.onmidimessage = dispatchMidiEvent;
+            }
+        }
+    }, [midiAccess]);
+
+
+    if(!midiAccess) {
         return <div>
             Midi access required
         </div>
     }
 
-    if(!midiAccess.isMIDIAccessGranted) {
+    if(!isMIDIAccessGranted) {
         return <div>
             Error: MIDI access disabled
         </div>
     }
 
-    console.log(midiAccess)
-
-    return (
-        children
-    )
+    return children;
 };

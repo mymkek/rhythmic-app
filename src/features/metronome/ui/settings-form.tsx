@@ -3,7 +3,7 @@
 import React from "react";
 
 import {MAX_TEMPO, MIN_TEMPO} from "@/features/metronome/constants";
-import {useMetronomeState} from "@/features/metronome/model/metronome-state";
+import {useMetronomeState} from "@/features/metronome/model";
 import {ChangeNumericValueHandler} from "@/features/metronome/ui/types";
 import {Button} from "@/shared/ui/inputs/button";
 import {RangeSlider} from "@/shared/ui/inputs/range/range-slider";
@@ -11,7 +11,7 @@ import {RangeSlider} from "@/shared/ui/inputs/range/range-slider";
 
 export const SettingsForm = () => {
 
-    const {tempo, setTempo, timeSignature, setTimeSignature} = useMetronomeState();
+    const {tempo, setTempo, increaseBarPattern, decreaseBarPattern} = useMetronomeState();
 
     const handleChangeTempo: ChangeNumericValueHandler = (operation, value) => {
         const tempoChanges = operation === "add" ? value : 0 - value;
@@ -27,15 +27,6 @@ export const SettingsForm = () => {
         setTempo(tempo + tempoChanges);
     }
 
-    const handleChangeTimeSignature: ChangeNumericValueHandler = (operation, value) => {
-        if (timeSignature === 1 && operation === "remove") {
-            return;
-        }
-
-        const timeSignatureChanges = operation === "add" ? value : 0 - value;
-
-        setTimeSignature(timeSignature + timeSignatureChanges);
-    }
 
     const increaseTempo = () => {
         handleChangeTempo("add", 1);
@@ -45,13 +36,6 @@ export const SettingsForm = () => {
         handleChangeTempo("remove", 1);
     }
 
-    const increaseTimeSignature = () => {
-        handleChangeTimeSignature("add", 1);
-    }
-
-    const decreaseTimeSignature = () => {
-        handleChangeTimeSignature("remove", 1);
-    }
 
     const handleChangeSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Number(e.target.value);
@@ -82,8 +66,8 @@ export const SettingsForm = () => {
                     <h3>time signature</h3>
                     <div className="flex">
 
-                        <Button onClick={decreaseTimeSignature}>- 1</Button>
-                        <Button onClick={increaseTimeSignature}>+ 1</Button>
+                        <Button onClick={decreaseBarPattern}>- 1</Button>
+                        <Button onClick={increaseBarPattern}>+ 1</Button>
                     </div>
                 </div>
             </div>
