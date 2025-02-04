@@ -26,7 +26,6 @@ export const RangeSlider = ({value, onChange, min, max, marks}: RangeSliderProps
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
             />
             <div className="relative h-9 mx-2">
-
                 {marks.map((mark, i, array) => (
                     <React.Fragment key={i}>
                         <div className="absolute w-px bg-amber-50" style={{
@@ -40,7 +39,6 @@ export const RangeSlider = ({value, onChange, min, max, marks}: RangeSliderProps
                             {mark}
                         </div>
                     </React.Fragment>
-
                 ))}
             </div>
 

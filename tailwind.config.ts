@@ -11,9 +11,13 @@ export default {
         transparent: 'transparent',
         current: 'currentColor',
         'rose': colors.rose,
+        'accent': colors.indigo,
         'amber': colors.amber,
         'slate': colors.slate,
       },
+      rotate: {
+        '-15': '-15deg',
+      }
     },
   },
   plugins: [],

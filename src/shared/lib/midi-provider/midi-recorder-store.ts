@@ -19,7 +19,7 @@ export const useMidiRecorderStore = create<MidiRecorderStore>()(
         currentNotes: new Map(),
         dispatchEvent: (message) => {
             const { isRecording } = getState();
-            if (!message.data || !isRecording) return;
+            if (!message.data) return;
 
             set({ data: [...getState().data, message] });
             const [status, note] = message.data;
@@ -57,13 +57,12 @@ export const useMidiRecorderStore = create<MidiRecorderStore>()(
             set({isRecording: false})
         },
         recycle: () => {
-            const {stop, clearData, start, currentNotes} = getState();
-            stop();
-            clearData();
-            start();
-            const updatedNotes = new Map(currentNotes);
-            updatedNotes.forEach((note) => {
-                updatedNotes.set(note, performance.now());
-            })
+            const {currentNotes} = getState();
+
+            const updatedNotes = new Map(
+                Array.from(currentNotes.keys()).map((note) => [note, performance.now()])
+            );
+
+            set({ currentNotes: updatedNotes });
         }
     })));
