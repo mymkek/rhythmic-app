@@ -1,21 +1,61 @@
+@import 'tailwindcss';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fade-out-scale {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+
+@theme {
+  --animate-fade-out-scale: fade-out-scale 0.5s ease-out infinite;
+
+
+  --color-primary-50: oklch(0.962 0.018 272.314);
+  --color-primary-100: oklch(0.93 0.034 272.788);
+  --color-primary-200: oklch(0.87 0.065 274.039);
+  --color-primary-300: oklch(0.785 0.115 274.713);
+  --color-primary-400: oklch(0.673 0.182 276.935);
+  --color-primary-500: oklch(0.585 0.233 277.117);
+  --color-primary-600: oklch(0.511 0.262 276.966);
+  --color-primary-700: oklch(0.457 0.24 277.023);
+  --color-primary-900: oklch(0.359 0.144 278.697);
+  --color-primary-800: oklch(0.398 0.195 277.366);
+  --color-primary-950: oklch(0.257 0.09 281.288);
+
+  --color-secondary-50: oklch(0.969 0.015 12.422);
+  --color-secondary-100: oklch(0.941 0.03 12.58);
+  --color-secondary-200: oklch(0.892 0.058 10.001);
+  --color-secondary-300: oklch(0.81 0.117 11.638);
+  --color-secondary-400: oklch(0.712 0.194 13.428);
+  --color-secondary-500: oklch(0.645 0.246 16.439);
+  --color-secondary-600: oklch(0.586 0.253 17.585);
+  --color-secondary-700: oklch(0.514 0.222 16.935);
+  --color-secondary-800: oklch(0.455 0.188 13.697);
+  --color-secondary-900: oklch(0.41 0.159 10.272);
+  --color-secondary-950: oklch(0.271 0.105 12.094);
+
+  --color-teritary-50: oklch(0.986 0.031 120.757);
+  --color-teritary-100: oklch(0.967 0.067 122.328);
+  --color-teritary-200: oklch(0.938 0.127 124.321);
+  --color-teritary-300: oklch(0.897 0.196 126.665);
+  --color-teritary-400: oklch(0.841 0.238 128.85);
+  --color-teritary-500: oklch(0.768 0.233 130.85);
+  --color-teritary-600: oklch(0.648 0.2 131.684);
+  --color-teritary-700: oklch(0.532 0.157 131.589);
+  --color-teritary-800: oklch(0.453 0.124 133);
+  --color-teritary-900: oklch(0.405 0.101 131.063);
+  --color-teritary-950: oklch(0.274 0.072 132.109);
+
+  --color-black: #000;
+  --color-white: #fff;
 }

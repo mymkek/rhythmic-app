@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.(wav|mp3|ogg)$/,
+      type: 'asset/resource',
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

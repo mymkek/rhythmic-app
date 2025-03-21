@@ -1,30 +1,16 @@
-import React from "react";
-
+import React from 'react';
 
 type MetronomeBarProps = { isActive: boolean };
 
-export const MetronomeBarComponent = ({
-                                          isActive
-                                      }: MetronomeBarProps) => {
+export const MetronomeBarComponent = ({ isActive }: MetronomeBarProps) => {
+  const activeClasses = isActive ? 'bg-radial from-pink-400 from-40% to-fuchsia-700' : 'bg-neutral-400';
 
-    // const bgColorsMap: Record<MetronomeBarProps["type"], string> = {
-    //     "upbeat": "bg-amber-500 hover:bg-amber-400",
-    //     "downbeat": "bg-rose-500 hover:bg-rose-400",
-    //     "skipped": "bg-slate-700 hover:bg-slate-600",
-    // }
-
-    const classes = [
-        "rounded-full",
-        isActive ? "bg-amber-500 hover:bg-amber-400" : null,
-        "w-4",
-        "h-4",
-        "cursor-pointer",
-        "border"
-    ]
-
-    return (
-        <div className={classes.join(" ")}>
-
-        </div>
-    )
+  return (
+    <span className="relative flex size-3 h-16 mx-5">
+      {isActive ? (
+        <span className="absolute h-full w-full animate-fade-out-scale rounded-full bg-rose-400"></span>
+      ) : null}
+      <span className={'relative w-full h-full rounded-full ' + activeClasses}></span>
+    </span>
+  );
 };
